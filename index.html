@@ -71,7 +71,6 @@
     <div id="WC" class="fade-in-out hidden center"></div>
   </div>
   <script>
-    document.documentElement.requestFullscreen(); // フルスクリーン
     var h3t = document.getElementById('h3title');
     var init = document.getElementById('init');
     var welcome = document.getElementById('WC');
@@ -96,7 +95,7 @@
       welcome.innerHTML += "<div class='welcome'><h2>Welcome</h2><div>" + e.data + " 様</div></div>";
       welcome.classList.remove('hidden');
       socket.close();
-      // 5 秒後にページをリロード
+      // 10 秒後にページをリロード
       setTimeout(function() {
         window.location.reload();
       }, 10000);
