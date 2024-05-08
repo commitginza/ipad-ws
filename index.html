@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>受付</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+    .container {
+      width: 100%;
+      margin: 0 auto;
+    }
+    .title-center {
+      text-align: center;
+      font-size:7vw;
+      margin:0;
+      margin-top:10px;
+    }
+    .init-center {
+      text-align: center;
+      font-size:28px;
+    }
+    .center {
+      text-align: center;
+      display: flex;
+      justify-content: center; /* 横方向（左右）の中央揃え */
+      align-items: center; /* 縦方向（上下）の中央揃え */
+      position: fixed; /* スクロールに関係なく固定位置に配置 */
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+    #QR img {
+      max-width: 100%;
+      height: auto;
+    }
+    .fade-in-out {
+      opacity: 1;
+      transition: opacity 0.5s ease-in-out;
+    }
+    .fade-in-out.hidden {
+      opacity: 0;
+    }
+    .fade-in-out.none {
+      display: none;
+    }
+    .welcome {
+      width: 100%;
+    }
+    .welcome > h2 {
+      font-size: 10vw;
+      margin: 0;
+    }
+    .welcome > div {
+      font-size: 5vw;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h3 id="h3title" class="fade-in-out title-center">受付</h3>
+    <div id="init" class="fade-in-out init-center"></div>
+    <div id="QR" class="fade-in-out center"><img src="https://watchimg.s3.ap-northeast-1.amazonaws.com/qr.png" /></div>
+    <div id="WC" class="fade-in-out hidden center"></div>
+  </div>
+  <script>
+    document.documentElement.requestFullscreen(); // フルスクリーン
+    var h3t = document.getElementById('h3title');
+    var init = document.getElementById('init');
+    var welcome = document.getElementById('WC');
+    var qrcode = document.getElementById('QR');
+    // 1.画面初期ロード時にWebSocketのインスタンス生成
+     var socket = new WebSocket("wss://3ioarijskd.execute-api.ap-northeast-1.amazonaws.com/production/");
+
+    // 2.接続が確立した時の処理
+    socket.onopen = function() {
+      init.innerHTML += "マイページのカメラから読み込んでください";
+      document.body.style.opacity = 1; // WebSocket 接続が確立した後にフェードイン
+    };
+
+    // 3.サーバーからメッセージを受信した時の処理
+    socket.onmessage = function(e) {
+      init.classList.add('none');
+      qrcode.classList.add('none');
+      h3t.classList.add('none');
+      document.body.style.backgroundImage = 'url(https://watchimg.s3.ap-northeast-1.amazonaws.com/welcome_bg_ipadpro_11inch_2nd.png)';
+      document.body.style.backgroundSize = "100%";
+      document.body.style.backgroundRepeat = "no-repeat";
+      welcome.innerHTML += "<div class='welcome'><h2>Welcome</h2><div>" + e.data + " 様</div></div>";
+      welcome.classList.remove('hidden');
+      socket.close();
+      // 5 秒後にページをリロード
+      setTimeout(function() {
+        window.location.reload;
+      }, 10000);
+    };
+  </script>
+</body>
+</html>
