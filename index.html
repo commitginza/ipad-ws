@@ -71,6 +71,7 @@
     <h3 id="h3title" class="fade-in-out title-center">COMMIT PASS 受付待ち</h3>
     <div id="WC" class="fade-in-out hidden center"></div>
   </div>
+  <div id="enable-sound" onclick="enableSound()">タップして音声を有効にしてください</div>
   <script>
     var h3t = document.getElementById('h3title');
     //var init = document.getElementById('init');
@@ -79,6 +80,15 @@
     // 1.画面初期ロード時にWebSocketのインスタンス生成
     var socket = new WebSocket("wss://3ioarijskd.execute-api.ap-northeast-1.amazonaws.com/production/");
     var audio = new Audio('https://watchimg.s3.ap-northeast-1.amazonaws.com/recept.mp3');
+    var audioEnabled = false;
+    function enableSound() {
+      audio.play().then(() => {
+        audioEnabled = true;
+        enableSoundDiv.style.display = 'none';
+      }).catch((error) => {
+        console.error('Error playing sound:', error);
+      });
+    }
 
     // 2.接続が確立した時の処理
     socket.onopen = function() {
@@ -91,7 +101,11 @@
     socket.onmessage = function(e) {
       console.log("Message received from server: ", e.data);
       // 音を鳴らす
-      audio.play();
+      if (audioEnabled) {
+        audio.play().catch((error) => {
+          console.error('Error playing sound:', error);
+        });
+      }
       //init.classList.add('none');
       //qrcode.classList.add('none');
       h3t.classList.add('none');
