@@ -81,14 +81,39 @@
     // 1.画面初期ロード時にWebSocketのインスタンス生成
     var socket = new WebSocket("wss://3ioarijskd.execute-api.ap-northeast-1.amazonaws.com/production/");
     var audio = new Audio('https://watchimg.s3.ap-northeast-1.amazonaws.com/recept.mp3');
-    var audioEnabled = false;
+    var audioEnabled = getCookie('audioEnabled') === 'true';
+    if (audioEnabled) {
+      enableSoundDiv.style.display = 'none';
+    }
     function enableSound() {
       audio.play().then(() => {
         audioEnabled = true;
+        setCookie('audioEnabled', 'true', 365);
         enableSoundDiv.style.display = 'none';
       }).catch((error) => {
         console.error('Error playing sound:', error);
       });
+    }
+
+    function setCookie(name, value, days) {
+      var expires = "";
+      if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+      }
+      document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+    }
+
+    function getCookie(name) {
+      var nameEQ = name + "=";
+      var ca = document.cookie.split(';');
+      for(var i=0;i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1,c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+      }
+      return null;
     }
 
     // 2.接続が確立した時の処理
@@ -115,6 +140,7 @@
       document.body.style.backgroundRepeat = "no-repeat";
       welcome.innerHTML += "<div class='welcome'><h2>Welcome</h2><div>" + e.data + " 様</div></div>";
       welcome.classList.remove('hidden');
+      enableSoundDiv.style.display = 'none';
       socket.close();
       // 10 秒後にページをリロード
       setTimeout(function() {
