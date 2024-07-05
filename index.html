@@ -115,6 +115,15 @@
       }
       return null;
     }
+    
+    function resetToInitialState() {
+      // 初期状態に戻す処理
+      h3t.classList.remove('none');
+      h3t.classList.add('fade-in-out');
+      document.body.style.backgroundImage = '';
+      welcome.innerHTML = '';
+      welcome.classList.add('hidden');
+    }
 
     // 2.接続が確立した時の処理
     socket.onopen = function() {
@@ -130,6 +139,8 @@
       if (audioEnabled) {
         audio.play().catch((error) => {
           console.error('Error playing sound:', error);
+          // 音声再生に失敗した場合、ユーザーに再度音声を有効にしてもらうためのメッセージを表示
+          enableSoundDiv.style.display = 'flex';
         });
       }
       //init.classList.add('none');
@@ -144,7 +155,7 @@
       socket.close();
       // 10 秒後にページをリロード
       setTimeout(function() {
-        window.location.reload();
+        resetToInitialState();
       }, 10000);
     };
     socket.onclose = function(event) {
