@@ -79,7 +79,7 @@
     var welcome = document.getElementById('WC');
     var enableSoundDiv = document.getElementById('enable-sound');
     // 1.画面初期ロード時にWebSocketのインスタンス生成
-    var socket = new WebSocket("wss://3ioarijskd.execute-api.ap-northeast-1.amazonaws.com/production/");
+    var socket;
     var audio = new Audio('https://watchimg.s3.ap-northeast-1.amazonaws.com/recept.mp3');
     var audioEnabled = false;
     function enableSound() {
@@ -99,51 +99,56 @@
       welcome.innerHTML = '';
       welcome.classList.add('hidden');
     }
-
-    // 2.接続が確立した時の処理
-    socket.onopen = function() {
-      //init.innerHTML += "マイページのカメラから読み込んでください";
-      console.log("WebSocket connection ok.");
-      document.body.style.opacity = 1; // WebSocket 接続が確立した後にフェードイン
-    };
-
-    // 3.サーバーからメッセージを受信した時の処理
-    socket.onmessage = function(e) {
-      console.log("Message received from server: ", e.data);
-      // 音を鳴らす
-      if (audioEnabled) {
-        audio.play().catch((error) => {
-          console.error('Error playing sound:', error);
-          // 音声再生に失敗した場合、ユーザーに再度音声を有効にしてもらうためのメッセージを表示
-          enableSoundDiv.style.display = 'flex';
-        });
-      }
-      //init.classList.add('none');
-      //qrcode.classList.add('none');
-      h3t.classList.add('none');
-      document.body.style.backgroundImage = 'url(https://watchimg.s3.ap-northeast-1.amazonaws.com/welcome_bg_ipadpro_11inch_2nd.png)';
-      document.body.style.backgroundSize = "100%";
-      document.body.style.backgroundRepeat = "no-repeat";
-      welcome.innerHTML += "<div class='welcome'><h2>Welcome</h2><div>" + e.data + " 様</div></div>";
-      welcome.classList.remove('hidden');
-      enableSoundDiv.style.display = 'none';
-      socket.close();
-      // 10 秒後にページをリロード
-      setTimeout(function() {
-        resetToInitialState();
-      }, 10000);
-    };
-    socket.onclose = function(event) {
-      if (event.wasClean) {
-        console.log(`WebSocket connection closed cleanly, code=${event.code}, reason=${event.reason}`);
-      } else {
-        console.log('WebSocket connection closed unexpectedly');
-      }
-    };
-
-    socket.onerror = function(error) {
-      console.error(`WebSocket error: ${error.message}`);
-    };
+    function connectWebSocket() {
+      socket = new WebSocket("wss://3ioarijskd.execute-api.ap-northeast-1.amazonaws.com/production/");
+      // 2.接続が確立した時の処理
+      socket.onopen = function() {
+        //init.innerHTML += "マイページのカメラから読み込んでください";
+        console.log("WebSocket connection ok.");
+        document.body.style.opacity = 1; // WebSocket 接続が確立した後にフェードイン
+      };
+  
+      // 3.サーバーからメッセージを受信した時の処理
+      socket.onmessage = function(e) {
+        console.log("Message received from server: ", e.data);
+        // 音を鳴らす
+        if (audioEnabled) {
+          audio.play().catch((error) => {
+            console.error('Error playing sound:', error);
+            // 音声再生に失敗した場合、ユーザーに再度音声を有効にしてもらうためのメッセージを表示
+            enableSoundDiv.style.display = 'flex';
+          });
+        }
+        //init.classList.add('none');
+        //qrcode.classList.add('none');
+        h3t.classList.add('none');
+        document.body.style.backgroundImage = 'url(https://watchimg.s3.ap-northeast-1.amazonaws.com/welcome_bg_ipadpro_11inch_2nd.png)';
+        document.body.style.backgroundSize = "100%";
+        document.body.style.backgroundRepeat = "no-repeat";
+        welcome.innerHTML += "<div class='welcome'><h2>Welcome</h2><div>" + e.data + " 様</div></div>";
+        welcome.classList.remove('hidden');
+        enableSoundDiv.style.display = 'none';
+        socket.close();
+        // 10 秒後にページをリロード
+        setTimeout(function() {
+          resetToInitialState();
+        }, 10000);
+      };
+  
+      socket.onclose = function(event) {
+        if (event.wasClean) {
+          console.log(`WebSocket connection closed cleanly, code=${event.code}, reason=${event.reason}`);
+        } else {
+          console.log('WebSocket connection closed unexpectedly, attempting to reconnect...');
+          setTimeout(connectWebSocket, 1000); // 1秒後に再接続を試みる
+        }
+      };
+  
+      socket.onerror = function(error) {
+        console.error(`WebSocket error: ${error.message}`);
+      };
+    }
+    connectWebSocket(); // 初回接続
   </script>
 </body>
 </html>
