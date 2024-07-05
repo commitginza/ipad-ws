@@ -77,7 +77,8 @@
     var welcome = document.getElementById('WC');
     //var qrcode = document.getElementById('QR');
     // 1.画面初期ロード時にWebSocketのインスタンス生成
-     var socket = new WebSocket("wss://3ioarijskd.execute-api.ap-northeast-1.amazonaws.com/production/");
+    var socket = new WebSocket("wss://3ioarijskd.execute-api.ap-northeast-1.amazonaws.com/production/");
+    var audio = new Audio('https://watchimg.s3.ap-northeast-1.amazonaws.com/recept.mp3');
 
     // 2.接続が確立した時の処理
     socket.onopen = function() {
@@ -89,6 +90,8 @@
     // 3.サーバーからメッセージを受信した時の処理
     socket.onmessage = function(e) {
       console.log("Message received from server: ", e.data);
+      // 音を鳴らす
+      audio.play();
       //init.classList.add('none');
       //qrcode.classList.add('none');
       h3t.classList.add('none');
