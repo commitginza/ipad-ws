@@ -65,16 +65,17 @@
 </head>
 <body>
   <div class="container">
-    <h3 id="h3title" class="fade-in-out title-center">受付</h3>
+    //<h3 id="h3title" class="fade-in-out title-center">受付</h3>
+    <h3 id="h3title" class="fade-in-out title-center">COMMIT PASS 受付待ち</h3>
     <div id="init" class="fade-in-out init-center"></div>
-    <div id="QR" class="fade-in-out center"><img src="https://watchimg.s3.ap-northeast-1.amazonaws.com/qr.png" /></div>
+    //<div id="QR" class="fade-in-out center"><img src="https://watchimg.s3.ap-northeast-1.amazonaws.com/qr.png" /></div>
     <div id="WC" class="fade-in-out hidden center"></div>
   </div>
   <script>
     var h3t = document.getElementById('h3title');
     var init = document.getElementById('init');
     var welcome = document.getElementById('WC');
-    var qrcode = document.getElementById('QR');
+    //var qrcode = document.getElementById('QR');
     // 1.画面初期ロード時にWebSocketのインスタンス生成
      var socket = new WebSocket("wss://3ioarijskd.execute-api.ap-northeast-1.amazonaws.com/production/");
 
@@ -87,7 +88,7 @@
     // 3.サーバーからメッセージを受信した時の処理
     socket.onmessage = function(e) {
       init.classList.add('none');
-      qrcode.classList.add('none');
+      //qrcode.classList.add('none');
       h3t.classList.add('none');
       document.body.style.backgroundImage = 'url(https://watchimg.s3.ap-northeast-1.amazonaws.com/welcome_bg_ipadpro_11inch_2nd.png)';
       document.body.style.backgroundSize = "100%";
