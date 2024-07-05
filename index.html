@@ -128,7 +128,6 @@
         welcome.innerHTML += "<div class='welcome'><h2>Welcome</h2><div>" + e.data + " 様</div></div>";
         welcome.classList.remove('hidden');
         enableSoundDiv.style.display = 'none';
-        socket.close();
         // 10 秒後にページをリロード
         setTimeout(function() {
           resetToInitialState();
