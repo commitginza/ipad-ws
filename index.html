@@ -82,11 +82,13 @@
     // 2.接続が確立した時の処理
     socket.onopen = function() {
       //init.innerHTML += "マイページのカメラから読み込んでください";
+      console.log("WebSocket connection ok.");
       document.body.style.opacity = 1; // WebSocket 接続が確立した後にフェードイン
     };
 
     // 3.サーバーからメッセージを受信した時の処理
     socket.onmessage = function(e) {
+      console.log("Message received from server: ", e.data);
       //init.classList.add('none');
       //qrcode.classList.add('none');
       h3t.classList.add('none');
@@ -100,6 +102,17 @@
       setTimeout(function() {
         window.location.reload();
       }, 10000);
+    };
+    socket.onclose = function(event) {
+      if (event.wasClean) {
+        console.log(`WebSocket connection closed cleanly, code=${event.code}, reason=${event.reason}`);
+      } else {
+        console.log('WebSocket connection closed unexpectedly');
+      }
+    };
+
+    socket.onerror = function(error) {
+      console.error(`WebSocket error: ${error.message}`);
     };
   </script>
 </body>
