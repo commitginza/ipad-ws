@@ -80,38 +80,41 @@
     var enableSoundDiv = document.getElementById('enable-sound');
     // 1.画面初期ロード時にWebSocketのインスタンス生成
     var socket;
-    var audio = new Audio('https://watchimg.s3.ap-northeast-1.amazonaws.com/recept.mp3');
+    // レジキャッシャーの音声
+    // var audio = new Audio('https://watchimg.s3.ap-northeast-1.amazonaws.com/recept.mp3');
+    // ピロンの音声
+    var audio = new Audio('https://watchimg.s3.ap-northeast-1.amazonaws.com/notice22.mp3');
     var audioEnabled = false;
     // mp3出力版
-    // function enableSound() {
-    //   audio.play().then(() => {
-    //     audioEnabled = true;
-    //     enableSoundDiv.style.display = 'none';
-    //   }).catch((error) => {
-    //     console.error('Error playing sound:', error);
-    //   });
-    // }
-    // 音声生成版
     function enableSound() {
-      let msg = new SpeechSynthesisUtterance('音声が有効になりました');
-      window.speechSynthesis.speak(msg);
-      audioEnabled = true;
-      enableSoundDiv.style.display = 'none';
-    } 
-    
-    function playVoice(text) {
-      let msg = new SpeechSynthesisUtterance();
-      msg.text = text;
-      msg.lang = 'ja-JP';
-      msg.rate = 0.9; // 音声スピード
-      msg.pitch = 0.2; // 抑揚を設定
-      const voices = window.speechSynthesis.getVoices();
-      const maleVoice = voices.find(voice => voice.lang === 'ja-JP' && voice.name.includes('Male'));
-      if (maleVoice) {
-        msg.voice = maleVoice;
-      }
-      window.speechSynthesis.speak(msg);
+      audio.play().then(() => {
+        audioEnabled = true;
+        enableSoundDiv.style.display = 'none';
+      }).catch((error) => {
+        console.error('Error playing sound:', error);
+      });
     }
+    // 音声生成版
+    // function enableSound() {
+    //   let msg = new SpeechSynthesisUtterance('音声が有効になりました');
+    //   window.speechSynthesis.speak(msg);
+    //   audioEnabled = true;
+    //   enableSoundDiv.style.display = 'none';
+    // }
+    
+    // function playVoice(text) {
+    //   let msg = new SpeechSynthesisUtterance();
+    //   msg.text = text;
+    //   msg.lang = 'ja-JP';
+    //   msg.rate = 0.9; // 音声スピード
+    //   msg.pitch = 0.2; // 抑揚を設定
+    //   const voices = window.speechSynthesis.getVoices();
+    //   const maleVoice = voices.find(voice => voice.lang === 'ja-JP' && voice.name.includes('Male'));
+    //   if (maleVoice) {
+    //     msg.voice = maleVoice;
+    //   }
+    //   window.speechSynthesis.speak(msg);
+    // }
 
     function resetToInitialState() {
       // 初期状態に戻す処理
@@ -134,17 +137,17 @@
       socket.onmessage = function(e) {
         console.log("Message received from server: ", e.data);
         // 音声生成版
-        if (audioEnabled) {
-          playVoice(e.data + "様がご来店されました。");
-        }
+        //if (audioEnabled) {
+        //  playVoice(e.data + "様がご来店されました。");
+        //}
         // mp3を鳴らす
-        // if (audioEnabled) {
-        //   audio.play().catch((error) => {
-        //     console.error('Error playing sound:', error);
-        //     // 音声再生に失敗した場合、ユーザーに再度音声を有効にしてもらうためのメッセージを表示
-        //     enableSoundDiv.style.display = 'flex';
-        //   });
-        // }
+        if (audioEnabled) {
+          audio.play().catch((error) => {
+            console.error('Error playing sound:', error);
+            // 音声再生に失敗した場合、ユーザーに再度音声を有効にしてもらうためのメッセージを表示
+            enableSoundDiv.style.display = 'flex';
+          });
+        }
         //init.classList.add('none');
         //qrcode.classList.add('none');
         h3t.classList.add('none');
